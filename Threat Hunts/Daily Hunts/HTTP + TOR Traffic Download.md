@@ -1,3 +1,57 @@
+# 🧅 HTTP Executable Downloads + Tor Traffic
+
+**Detects executable and script downloads over cleartext HTTP, then flags any that touch Tor infrastructure.**
+
+---
+
+## 🎯 Purpose
+
+Encrypted traffic hides payload names, but plenty of malware still pulls its second stage over plain HTTP — and when it does, Defender's network signature inspection captures the raw request. That means the actual filename being downloaded is visible.
+
+This hunt parses those inspected HTTP GET requests, keeps only the ones fetching executable or script content, and correlates the destination against Tor exit nodes, Tor ports, and Tor client processes.
+
+A payload arriving over HTTP is worth a look. A payload arriving over HTTP **from a Tor exit node** is an attacker deliberately anonymizing their delivery infrastructure.
+
+---
+
+## 🔍 How it works
+
+| Step | Logic |
+| --- | --- |
+| 1️⃣ | Filter `DeviceNetworkEvents` to `NetworkSignatureInspected` with signature `HTTP_Client` |
+| 2️⃣ | Parse the request method from the matched content — keep `GET` only |
+| 3️⃣ | Extract the requested filename and its extension |
+| 4️⃣ | Keep only executable / script / container extensions (24 types) |
+| 5️⃣ | Exclude known-good update and CDN destinations |
+| 6️⃣ | Correlate against Tor exit nodes, ports, and processes |
+| 7️⃣ | Score, dedupe, and rank |
+
+---
+
+## 🧅 Tor correlation
+
+Three independent signals, weighted by how strongly each implies intent:
+
+| Signal | Weight | Meaning |
+| --- | --- | --- |
+| **Exit node** | +4 | Download came **from** a live Tor exit node — strongest indicator |
+| **Tor port** | +3 | Connection on 9001/9030/9040/9050/9051/9150/9151 |
+| **Tor process** | +2 | `tor.exe`, `obfs4proxy.exe`, `meek-client.exe`, `snowflake-client.exe` |
+
+The exit-node list is pulled live from the Tor Project's official bulk list.
+
+---
+
+## ⚖️ Additional risk signals
+
+- 🔴 **High-risk extension** — `.exe`, `.dll`, `.scr`, `.ps1`, `.hta`, `.js`, `.vbs`, `.lnk`, `.iso`
+- 🌐 **Raw-IP download** — no hostname, just an IP; skips DNS entirely
+- 📡 **External destination** — public IP space
+
+---
+
+## 🔍 KQL
+
 ```
 // ============================================================
 // HTTP EXECUTABLE DOWNLOADS + TOR TRAFFIC (Cleartext Inspection)
@@ -113,3 +167,11 @@ DeviceNetworkEvents
     HostCustomEntity = DeviceName
 | sort by RiskScore desc, DownloadCount desc
 ```
+
+---
+
+## 📚 Reference
+
+MITRE ATT&CK: T1105 (Ingress Tool Transfer), T1071.001 (Application Layer Protocol: Web Protocols), T1090.003 (Proxy: Multi-hop Proxy / Tor).
+
+Feed: `https://check.torproject.org/torbulkexitlist` — fetched live via `externaldata` on each run. For production, consider caching to a Sentinel Watchlist to avoid a dependency on external availability.
