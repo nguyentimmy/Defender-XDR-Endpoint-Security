@@ -30,8 +30,7 @@ identity attacks, EDR evasion, and living-off-the-land techniques.
 
 ### 📊 Workbooks & Dashboards
 - **Endpoint Security Dashboard** — AV/ASR blocks, rare process executions, elevated PowerShell activity
-- **Email Threat Overview** — Phishing trends, quarantine analysis, external sender patterns
-- **Identity Risk Dashboard** — Risky sign-ins, MFA anomalies, service principal activity
+- **Incident Response Dashboard** — Streamline Incident Response and Detection time
 
 ### ⚡ Custom Detection Rules
 Production-ready analytics rules for Sentinel and Defender XDR covering 
