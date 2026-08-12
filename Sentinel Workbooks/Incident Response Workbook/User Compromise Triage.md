@@ -48,8 +48,7 @@ This unifies them into one timeline. Use it when a user is named in a phishing r
 // ============================================================
 let TargetUser = "{UserPrincipalName}";
 let InternalDomains = dynamic([
-    "craneww.com", "cranesolutionsllc.com",
-    "cranefreight.com", "magnointl.com"
+  "yourdomain1.com", "yourdomain2.com"
 ]);
 let MaliciousIPs = materialize(
     union
