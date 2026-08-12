@@ -43,12 +43,18 @@ Set the lookback to **45 days** for the initial retro-hunt — the sample carrie
 
 ---
 
-## ⚠️ Tuning
+## 🔍 KQL
 
-Expect occasional false positives in Section 2 from repackaged NVIDIA installers or driver bundles extracting to temp during a legitimate install. Verify against the file hash and signer, then **allowlist by hash, never by filename** — the whole point of the section is catching things that lie about their name.
+Want to simplify things to confirm if the known binary is running on any endpoint? Run this KQL to confirm.
+```
+DeviceProcessEvents
+| where Timestamp > ago(30d)
+| where FileName =~ "nvidia-sysruntime.exe"
+| project Timestamp, DeviceName, AccountName, FolderPath, ProcessCommandLine, SHA256
+| sort by Timestamp desc
+```
 
-
-
+If `"nvidia-sysruntime.exe"` is found, then can run this advanced hunting query to search for potential NVDIA RAT processes. 
 ```
 // ============================================================
 // LABUBARAT - NVIDIA Masquerade RAT Hunt (Rust/MaaS)
