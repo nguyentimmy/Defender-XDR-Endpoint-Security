@@ -27,6 +27,8 @@ This covers eight channels in a single view so the pattern is visible rather tha
 | **Mail Forwarding Rules** | Inbox and transport rules forwarding externally — the classic BEC method |
 | **Connection Fan-Out** | High connection counts from non-browser processes, as a volume proxy |
 
+---
+## KQL
 ```
 // ============================================================
 // DATA EXFILTRATION HUNT - Workbook (Parameterized)
