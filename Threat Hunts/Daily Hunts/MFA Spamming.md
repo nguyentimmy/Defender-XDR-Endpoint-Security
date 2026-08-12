@@ -65,16 +65,6 @@ Output also carries the targeted apps, OS, browser, cities, and the exact authen
 
 ---
 
-## 🛠️ Response notes
-
-**If `UserCaved` is true, a password reset alone is insufficient.** The attacker holds a live session. Revoke sessions and refresh tokens, then verify which MFA methods are currently registered — re-enrolling their own authenticator is the standard follow-up move, and it's what turns a one-time approval into durable access.
-
-**If denials only**, the credentials are still valid and known to the attacker. Rotate them; the bombing will resume otherwise.
-
-Either way, check for a new inbox forwarding rule and any OAuth consent grants — those are the two persistence mechanisms that survive credential rotation.
-
----
-
 ## 🔍  KQL
 
 ```
