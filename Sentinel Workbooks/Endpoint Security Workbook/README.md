@@ -1,7 +1,13 @@
-# Endpoint Security Dashboard
+📊 Endpoint Security Workbook
 
-A Microsoft Sentinel workbook for continuous endpoint monitoring. Six panels spanning prevention, detection, evasion, and visibility — designed to be glanced at rather than queried.
+Continuous fleet-wide endpoint monitoring. The layer that tells you where to look.
+Panels spanning prevention, detection, evasion, and visibility — designed to be glanced at rather than queried.
 
+🎯 Purpose
+
+This workbook watches the whole estate for activity that isn't tied to an open investigation: prevention hits, evasion attempts, unsanctioned tooling, and telemetry gaps.
+
+It's the front of the funnel. When a device shows up here repeatedly — or an antivirus detection comes back unremediated — that device becomes the input to the Incident Response workbook.
 ---
 
 ## 🖥️ Unapproved Remote Tools
