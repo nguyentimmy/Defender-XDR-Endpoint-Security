@@ -14,6 +14,7 @@ Attackers routinely neutralize endpoint protection before the damaging phase. Th
 
 **Severity:** most techniques score Critical; Defender *exclusions* score High, since they have legitimate administrative uses.
 
+```
 // ============================================================
 // EDR / AV Defense Evasion - Dashboard
 // ============================================================
@@ -218,3 +219,4 @@ union isfuzzy=true
     RiskScore,
     LastSeen
 | sort by RiskScore desc, OccurrenceCount desc
+```
