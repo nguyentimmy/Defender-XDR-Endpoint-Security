@@ -1,7 +1,10 @@
 # Incident Response Workbook
 
-Parameterized Microsoft Sentinel / Defender XDR queries for post-compromise investigation. Pick an entity and a time range, get a chronological timeline — no query editing.
+Parameterized Microsoft Sentinel / Defender XDR queries for post-compromise investigation.
 
+Traditionally, working a suspect device or account means opening a dozen separate queries across process, registry, network, identity, and mailbox telemetry — then lining up timestamps by hand. During an active incident, that setup work is the bottleneck, not the analysis.
+
+These consolidate it into a single parameterized view. Pick an entity, pick a time range, get a chronological timeline in seconds. No query editing, no copy-pasting between tabs, no reconstructing the sequence manually.
 | File | Scope | Answers |
 | --- | --- | --- |
 | `Device Compromise Triage.md` | One endpoint | What did the attacker do on this host? |
