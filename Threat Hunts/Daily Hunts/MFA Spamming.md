@@ -1,3 +1,81 @@
+# 🔔 MFA Fatigue / Push Bombing Detection
+
+**Detects MFA push-bombing campaigns, flags when the user caved, and enriches the source IP against multiple threat-intel feeds.**
+
+---
+
+## 🎯 Purpose
+
+MFA fatigue works by wearing the target down. An attacker who already has valid credentials fires authentication prompt after authentication prompt until the user approves one out of confusion, annoyance, or by reflex at 2am.
+
+The attack is noisy by nature — dozens of denials in minutes — which makes it detectable. This hunt finds the bombing pattern, then answers the question that actually determines severity: **did it work?**
+
+---
+
+## 🚨 The key signal: `UserCaved`
+
+Most MFA-spam detections stop at "someone got a lot of prompts." That's the wrong place to stop.
+
+If the burst of denials **ends in a success**, the attacker is inside. `SuccessfulAttempts > 0` inside a bombing window isn't a suspicious pattern — it's a confirmed compromise, and the response is session revocation, not a user awareness email.
+
+| Outcome | Meaning |
+| --- | --- |
+| Denials only | ⚠️ Attempted — credentials are already known, rotate them |
+| Denials **then success** | 🔴 Compromised — the attacker holds a valid session |
+
+---
+
+## 🔍 Detection logic
+
+| Step | Logic |
+| --- | --- |
+| 1️⃣ | Filter `SigninLogs` to MFA-required authentications |
+| 2️⃣ | `mv-expand` `AuthenticationDetails` to reach per-step results |
+| 3️⃣ | Count denial types: declined, no response, duplicate attempt |
+| 4️⃣ | Aggregate per user **and** source IP |
+| 5️⃣ | Flag when ≥5 denials land inside a 10-minute window |
+| 6️⃣ | Check whether any attempt succeeded → `UserCaved` |
+| 7️⃣ | Enrich the source IP against threat-intel feeds |
+
+Tunable: `SpamWindow` (10m) and `MinFailedAttempts` (5).
+
+---
+
+## 🌐 Feed enrichment
+
+Four feeds, weighted by what each implies. These are **severity boosters, not gatekeepers** — the bombing pattern alone is enough to surface a row, since attackers frequently spam from clean residential proxies that appear on no list.
+
+| Feed | Weight | Meaning |
+| --- | --- | --- |
+| **Feodo Tracker** | +4 | Active botnet C2 — strongest signal |
+| **Tor exit nodes** | +3 | Deliberately anonymized source |
+| **Sentinel TI** | — | Your own curated indicators |
+| **Blocklist.de** | +2 | Known attacking IP; broad, so supporting evidence only |
+
+`FeedMatches` shows which fired, so triage doesn't require re-checking each one.
+
+---
+
+## ⚖️ Additional scoring
+
+- 🔥 **Heavy bombing** — more than 20 denials
+- 🌍 **Multi-region** — prompts originating from more than one country
+
+Output also carries the targeted apps, OS, browser, cities, and the exact authentication window, so you can tell a Teams-only spray from one hitting a VPN endpoint.
+
+---
+
+## 🛠️ Response notes
+
+**If `UserCaved` is true, a password reset alone is insufficient.** The attacker holds a live session. Revoke sessions and refresh tokens, then verify which MFA methods are currently registered — re-enrolling their own authenticator is the standard follow-up move, and it's what turns a one-time approval into durable access.
+
+**If denials only**, the credentials are still valid and known to the attacker. Rotate them; the bombing will resume otherwise.
+
+Either way, check for a new inbox forwarding rule and any OAuth consent grants — those are the two persistence mechanisms that survive credential rotation.
+
+---
+
+## 🔍  KQL
 
 ```
 // ============================================================
@@ -136,3 +214,9 @@ SigninLogs
          IPCustomEntity = IPAddress
 | sort by RiskScore desc, UserCaved desc, FailedAttempts desc
 ```
+
+---
+
+## 📚 Reference
+
+MITRE ATT&CK: T1621 (MFA Request Generation), T1078 (Valid Accounts), T1090.003 (Multi-hop Proxy / Tor).
