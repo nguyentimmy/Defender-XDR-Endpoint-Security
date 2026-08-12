@@ -64,8 +64,7 @@ let SanctionedCloud = dynamic([
 ]);
 // --- Internal mail domains ---
 let InternalDomains = dynamic([
-    "craneww.com", "cranesolutionsllc.com",
-    "cranefreight.com", "magnointl.com"
+    "yourdomain1.com", "yourdomain2.com"
 ]);
 union isfuzzy=true
 // ============================================================
