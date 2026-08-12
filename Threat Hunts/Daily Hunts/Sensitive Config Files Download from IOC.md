@@ -64,9 +64,7 @@ Both lists are environment-specific and expected to grow as you tune.
 
 ---
 
-## 📤 Output
-
-Per device, remote IP, and file: file category, full path, hash, connection count, remote ports, and the initiating processes — enough to determine what left and by what route.
+## 🔍 KQL
 
 
 ```
