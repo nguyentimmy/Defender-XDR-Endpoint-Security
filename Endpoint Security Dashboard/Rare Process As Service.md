@@ -10,6 +10,7 @@ Service creation is a durable persistence method that survives reboots and runs 
 
 **Severity:** suspicious path + external network = High. Either alone = Medium.
 
+```
 // ============================================================
 // Rare Service Processes - services.exe Uncommon Children
 // ============================================================
@@ -84,3 +85,4 @@ DeviceImageLoadEvents
     DLLsLoaded,
     ServiceProcessSHA1
 | sort by Severity asc, FirstSeen desc
+```
