@@ -22,6 +22,7 @@ Secure-configuration posture — real-time protection off, tamper protection dis
 | `DeviceInfo`, `DeviceEvents`, `DeviceProcessEvents`, `DeviceNetworkEvents`, `DeviceFileEvents`, `DeviceRegistryEvents`, `DeviceImageLoadEvents` | All `DeviceTvm*` tables |
 
 The Defender Health panel uses `DeviceInfo` for this reason — it covers the most important blind spot (sensors not reporting) and works in both backends. Run configuration-posture queries Defender-side.
+```
 // ============================================================
 // Defender Health - Sensor Not Reporting (Sentinel-compatible)
 // ============================================================
@@ -49,3 +50,4 @@ DeviceInfo
     OnboardingStatus,
     DeviceId
 | sort by Severity asc, LastSeen asc
+```
