@@ -1,4 +1,51 @@
 
+# 🔀 PsExec Lateral Movement — Mass Remote File Drops
+
+**Detects PsExec-style tools pushing multiple executables to remote machines over admin shares inside a short window.**
+
+---
+
+## 🎯 Purpose
+
+PsExec is a legitimate Sysinternals admin tool, which is exactly why attackers use it. A single remote execution is unremarkable; **many binaries dropped to remote hosts in ten minutes** is not.
+
+That volume-and-velocity pattern is the signal. It's the shape of lateral movement, mass tool deployment, and — most commonly — ransomware staging, where the operator pushes the payload to every reachable machine before detonating.
+
+---
+
+## 🔍 Detection logic
+
+| Step | Logic |
+| --- | --- |
+| 1️⃣ | Filter `DeviceFileEvents` to PsExec-style command lines (`accepteula` is the classic tell) |
+| 2️⃣ | Require a UNC destination — the file landed on a *remote* machine |
+| 3️⃣ | Keep executable payloads only (`.exe`, `.bat`, `.cmd`, `.dll`) |
+| 4️⃣ | Require multiple binaries or a batch script in the command line |
+| 5️⃣ | Exclude known legitimate admin and management tooling |
+| 6️⃣ | Bin into 10-minute windows per device, account, and process |
+| 7️⃣ | Fire when distinct remote paths exceed the threshold |
+
+Tunable: `FileThreshold` (4 distinct remote paths) and `TimeWindowBin` (10 minutes).
+
+
+---
+
+## ⚖️ Risk signals
+
+| Signal | Weight | Meaning |
+| --- | --- | --- |
+| **Base — PsExec mass drop** | 3 | The pattern itself |
+| 📁 **Suspicious path** | +1 | Landed in Temp, Public, or ProgramData |
+| 🔓 **Admin share** | +1 | Written via `admin$`, `c$`, or `ipc$` |
+| 🔥 **High file count** | +3 | More than 10 distinct remote paths |
+| 🧬 **Many unique binaries** | +2 | More than 5 distinct hashes |
+
+High file count plus many distinct hashes is the ransomware-staging profile — one operator, many targets, varied payloads.
+
+---
+
+## 🔍 KQL
+
 ```
 // ============================================================
 // PSEXEC LATERAL MOVEMENT - Mass Remote File Drops
@@ -98,3 +145,9 @@ DeviceFileEvents
     AccountCustomEntity = InitiatingProcessAccountName
 | sort by RiskScore desc, FileCount desc
 ```
+
+---
+
+## 📚 Reference
+
+MITRE ATT&CK: T1570 (Lateral Tool Transfer), T1021.002 (Remote Services: SMB/Admin Shares), T1569.002 (System Services: Service Execution).
