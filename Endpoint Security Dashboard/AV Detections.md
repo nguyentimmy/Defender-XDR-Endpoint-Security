@@ -11,6 +11,7 @@ A detection isn't automatically a resolved detection. This panel separates threa
 
 **The row that matters:** a high-impact family that was **running** and **not remediated** is a live infection, not a caught one — that's the trigger to pivot into device triage.
 
+```
 // ============================================================
 // Antivirus Detections - Dashboard View
 // ============================================================
@@ -82,3 +83,4 @@ DeviceEvents
     RiskScore,
     LastSeen
 | sort by RiskScore desc, DetectionCount desc
+```
