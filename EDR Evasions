@@ -1,0 +1,204 @@
+// ============================================================
+// EDR / AV Defense Evasion - Dashboard
+// ============================================================
+// Multi-technique evasion view: BYOVD vulnerable drivers, EDR-killer
+// tooling, security process/service termination, Defender tampering,
+// Safe Mode abuse, and event log tampering.
+// ============================================================
+let LookupTime = 7d;
+let EdrProcesses = dynamic([
+    "MsMpEng.exe", "MsSense.exe", "SenseIR.exe", "SenseCncProxy.exe",
+    "CSFalconService.exe", "CSFalconContainer.exe",
+    "SentinelAgent.exe", "SentinelServiceHost.exe", "SentinelStaticEngine.exe",
+    "cb.exe", "RepMgr.exe", "RepUx.exe", "CylanceSvc.exe",
+    "SophosHealth.exe", "SAVService.exe", "McShield.exe", "mfemms.exe",
+    "ccSvcHst.exe", "SmcGui.exe", "xagt.exe", "TmCCSF.exe", "elastic-agent.exe"
+]);
+let EdrServices = dynamic([
+    "WinDefend", "Sense", "WdNisSvc", "SecurityHealthService", "wscsvc",
+    "CSFalconService", "SentinelAgent", "CbDefense", "CylanceSvc",
+    "SAVService", "McAfeeFramework", "SepMasterService", "xagt"
+]);
+let VulnerableDrivers = dynamic([
+    "rtcore64.sys", "rtkvhd64.sys", "gdrv.sys", "iqvw64e.sys", "dbutil_2_3.sys",
+    "mhyprot2.sys", "procexp152.sys", "aswarpot.sys", "truesight.sys",
+    "viragt64.sys", "kprocesshacker.sys", "gmer64.sys", "nvflash.sys",
+    "elrawdsk.sys", "atillk64.sys", "speedfan.sys", "winio64.sys"
+]);
+let EdrKillerTools = dynamic([
+    "aukill.exe", "terminator.exe", "edrkillshifter.exe", "edrsilencer.exe",
+    "backstab.exe", "edrsandblast.exe", "gmer.exe", "processhacker.exe",
+    "pchunter64.exe", "kdu.exe", "spyboy.exe", "zam64.sys"
+]);
+union isfuzzy=true
+// ============================================================
+// 1. BYOVD - vulnerable signed driver loaded
+// ============================================================
+(
+    DeviceImageLoadEvents
+    | where Timestamp > ago(LookupTime)
+    | where FileName has_any (VulnerableDrivers)
+    | extend Technique = "🔴 BYOVD Vulnerable Driver Load",
+             RiskScore = 9,
+             Detail = substring(strcat("Driver: ", FileName, " | Path: ", FolderPath, " | By: ", InitiatingProcessFileName), 0, 300)
+    | project Timestamp, Technique, RiskScore, DeviceName,
+              AccountName = InitiatingProcessAccountName,
+              ProcessName = InitiatingProcessFileName, Detail
+),
+(
+    DeviceFileEvents
+    | where Timestamp > ago(LookupTime)
+    | where FileName has_any (VulnerableDrivers)
+    | where ActionType in ("FileCreated", "FileModified")
+    | extend Technique = "🔴 BYOVD Vulnerable Driver Dropped",
+             RiskScore = 9,
+             Detail = substring(strcat("Driver: ", FileName, " | Path: ", FolderPath, " | By: ", InitiatingProcessFileName), 0, 300)
+    | project Timestamp, Technique, RiskScore, DeviceName,
+              AccountName = InitiatingProcessAccountName,
+              ProcessName = InitiatingProcessFileName, Detail
+),
+// ============================================================
+// 2. EDR-KILLER TOOLING (requires .exe + EDR context, not just name)
+// ============================================================
+(
+    DeviceProcessEvents
+    | where Timestamp > ago(LookupTime)
+    | extend CmdArgs = replace_regex(ProcessCommandLine, @'(?i)^\s*"?[^"]*?\.exe"?', "")
+    | where tolower(FileName) in~ (EdrKillerTools)
+        or (CmdArgs has_any (EdrKillerTools) and CmdArgs has_any (EdrProcesses))
+    | extend Technique = "🔴 EDR-Killer Tool Execution",
+             RiskScore = 10,
+             Detail = substring(strcat(FileName, " | ", CmdArgs, " | Path: ", FolderPath), 0, 300)
+    | project Timestamp, Technique, RiskScore, DeviceName,
+              AccountName, ProcessName = FileName, Detail
+),
+// ============================================================
+// 3. EDR PROCESS TERMINATION
+// ============================================================
+(
+    DeviceProcessEvents
+    | where Timestamp > ago(LookupTime)
+    | extend CmdArgs = replace_regex(ProcessCommandLine, @'(?i)^\s*"?[^"]*?\.exe"?', "")
+    | where FileName in~ ("taskkill.exe", "tskill.exe", "wmic.exe", "powershell.exe", "pwsh.exe", "pskill.exe", "pskill64.exe")
+    | where CmdArgs has_any (EdrProcesses)
+    | where CmdArgs has_any ("/f", "/im", "/pid", "Stop-Process", "kill", "terminate", "-Force")
+    | extend Technique = "🔴 EDR Process Termination",
+             RiskScore = 9,
+             Detail = substring(strcat(FileName, " | ", CmdArgs), 0, 300)
+    | project Timestamp, Technique, RiskScore, DeviceName,
+              AccountName, ProcessName = FileName, Detail
+),
+// ============================================================
+// 4. EDR SERVICE STOP / DISABLE
+// ============================================================
+(
+    DeviceProcessEvents
+    | where Timestamp > ago(LookupTime)
+    | extend CmdArgs = replace_regex(ProcessCommandLine, @'(?i)^\s*"?[^"]*?\.exe"?', "")
+    | where FileName in~ ("sc.exe", "net.exe", "net1.exe", "powershell.exe", "pwsh.exe", "reg.exe")
+    | where CmdArgs has_any (EdrServices)
+    | where CmdArgs has_any ("stop", "delete", "disabled", "start= disabled", "Stop-Service", "Set-Service", "config", "Remove-Service")
+    | extend Technique = "🔴 EDR Service Stop / Disable",
+             RiskScore = 9,
+             Detail = substring(strcat(FileName, " | ", CmdArgs), 0, 300)
+    | project Timestamp, Technique, RiskScore, DeviceName,
+              AccountName, ProcessName = FileName, Detail
+),
+// ============================================================
+// 5. DEFENDER TAMPERING (requires explicit disable verb)
+// ============================================================
+(
+    DeviceProcessEvents
+    | where Timestamp > ago(LookupTime)
+    | extend CmdArgs = replace_regex(ProcessCommandLine, @'(?i)^\s*"?[^"]*?\.exe"?', "")
+    | where CmdArgs has_any (
+        "DisableRealtimeMonitoring", "DisableBehaviorMonitoring",
+        "DisableIOAVProtection", "DisableScriptScanning",
+        "DisableArchiveScanning", "DisableBlockAtFirstSeen",
+        "DisableAntiSpyware", "DisableAntiVirus",
+        "TamperProtection", "MpEnablePus",
+        "Add-MpPreference -ExclusionPath", "Add-MpPreference -ExclusionProcess",
+        "Add-MpPreference -ExclusionExtension",
+        "AmsiScanBuffer", "amsiInitFailed", "AmsiUtils"
+    )
+    | extend IsExclusion = CmdArgs has "ExclusionPath" or CmdArgs has "ExclusionProcess" or CmdArgs has "ExclusionExtension"
+    | extend Technique = iff(IsExclusion, "🟠 Defender Exclusion Added", "🔴 Defender Protection Disabled"),
+             RiskScore = iff(IsExclusion, 7, 9),
+             Detail = substring(strcat(FileName, " | ", CmdArgs), 0, 300)
+    | project Timestamp, Technique, RiskScore, DeviceName,
+              AccountName, ProcessName = FileName, Detail
+),
+// ============================================================
+// 6. SAFE MODE ABUSE (boots without EDR drivers)
+// ============================================================
+(
+    DeviceProcessEvents
+    | where Timestamp > ago(LookupTime)
+    | extend CmdArgs = replace_regex(ProcessCommandLine, @'(?i)^\s*"?[^"]*?\.exe"?', "")
+    | where CmdArgs has_any ("bcdedit", "safeboot", "bootstatuspolicy")
+    | where CmdArgs has_any ("/set", "safeboot network", "safeboot minimal", "-set")
+    | extend Technique = "🔴 Safe Mode Boot Configuration",
+             RiskScore = 9,
+             Detail = substring(strcat(FileName, " | ", CmdArgs), 0, 300)
+    | project Timestamp, Technique, RiskScore, DeviceName,
+              AccountName, ProcessName = FileName, Detail
+),
+// ============================================================
+// 7. EVENT LOG / TELEMETRY TAMPERING
+// ============================================================
+(
+    DeviceProcessEvents
+    | where Timestamp > ago(LookupTime)
+    | extend CmdArgs = replace_regex(ProcessCommandLine, @'(?i)^\s*"?[^"]*?\.exe"?', "")
+    | where CmdArgs has_any (
+        "wevtutil cl", "wevtutil sl", "Clear-EventLog", "Remove-EventLog",
+        "auditpol /clear", "auditpol /remove", "auditpol /set",
+        "fsutil usn deletejournal", "EtwEventWrite", "PatchTraceLogging"
+    )
+    | extend Technique = "🔴 Event Log / ETW Tampering",
+             RiskScore = 9,
+             Detail = substring(strcat(FileName, " | ", CmdArgs), 0, 300)
+    | project Timestamp, Technique, RiskScore, DeviceName,
+              AccountName, ProcessName = FileName, Detail
+),
+// ============================================================
+// 8. NATIVE DEFENDER TAMPER EVENTS
+// ============================================================
+(
+    DeviceEvents
+    | where Timestamp > ago(LookupTime)
+    | where ActionType in (
+        "AntivirusDisabled", "AntivirusConfigurationChange",
+        "TamperingAttempt", "SecurityLogCleared",
+        "AntivirusScanCancelled", "AntivirusEmergencyUpdatesInstalled"
+    )
+    | extend Technique = "🔴 Native Defender Tamper Event",
+             RiskScore = 9,
+             Detail = substring(strcat(ActionType, " | ", tostring(AdditionalFields)), 0, 300)
+    | project Timestamp, Technique, RiskScore, DeviceName,
+              AccountName = InitiatingProcessAccountName,
+              ProcessName = InitiatingProcessFileName, Detail
+)
+| extend Severity = case(
+    RiskScore >= 9, "🔴 Critical",
+    RiskScore >= 7, "🟠 High",
+    "🟡 Medium"
+)
+| summarize
+    FirstSeen = min(Timestamp),
+    LastSeen = max(Timestamp),
+    OccurrenceCount = count(),
+    Details = make_set(Detail, 3)
+    by Technique, Severity, RiskScore, DeviceName, AccountName, ProcessName
+| project
+    FirstSeen,
+    Severity,
+    OccurrenceCount,
+    Technique,
+    DeviceName,
+    AccountName,
+    ProcessName,
+    Details,
+    RiskScore,
+    LastSeen
+| sort by RiskScore desc, OccurrenceCount desc
