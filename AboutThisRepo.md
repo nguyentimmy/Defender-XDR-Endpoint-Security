@@ -86,5 +86,5 @@ information. Test in a non-production environment before deploying.
 
 ## 📫 Connect
 
-Feel free to reach out on [LinkedIn](https://linkedin.com/in/yourprofile) 
+Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/nguyentimmy/) 
 for questions, feedback, or collaboration.
