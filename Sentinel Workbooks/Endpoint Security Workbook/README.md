@@ -8,6 +8,7 @@ Panels spanning prevention, detection, evasion, and visibility — designed to b
 This workbook watches the whole estate for activity that isn't tied to an open investigation: prevention hits, evasion attempts, unsanctioned tooling, and telemetry gaps.
 
 It's the front of the funnel. When a device shows up here repeatedly — or an antivirus detection comes back unremediated — that device becomes the input to the Incident Response workbook.
+
 ---
 
 ## 🖥️ Unapproved Remote Tools
@@ -111,10 +112,3 @@ Secure-configuration posture — real-time protection off, tamper protection dis
 
 The Defender Health panel uses `DeviceInfo` for this reason — it covers the most important blind spot (sensors not reporting) and works in both backends. Run configuration-posture queries Defender-side.
 
----
-
-## Notes
-
-Exclusion lists in each panel are environment-specific and appear as placeholders in the published queries. Populate them with your own sanctioned tooling, management agents, and confirmed-benign processes before deploying.
-
-Panels are tuned for monitoring, not alerting. Pair the high-fidelity techniques — EDR tampering, unremediated high-impact detections — with scheduled analytics rules for anything that warrants paging someone.
