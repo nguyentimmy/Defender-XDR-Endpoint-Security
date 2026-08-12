@@ -2,8 +2,6 @@
 
 A Microsoft Sentinel workbook for continuous endpoint monitoring. Six panels spanning prevention, detection, evasion, and visibility — designed to be glanced at rather than queried.
 
-Companion to the [Compromise Triage Workbook](#), which handles on-demand investigation once a panel surfaces something.
-
 ---
 
 ## 🖥️ Unapproved Remote Tools
