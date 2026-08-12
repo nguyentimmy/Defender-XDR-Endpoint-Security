@@ -1,3 +1,19 @@
+## 🥷 EDR Evasions
+
+**Detects attempts to blind or disable security tooling.**
+
+Attackers routinely neutralize endpoint protection before the damaging phase. This panel covers seven techniques in one view.
+
+- **BYOVD** — known-vulnerable signed drivers loaded or dropped to disk
+- **EDR-killer tools** — AuKill, Terminator, EDRKillShifter, EDRSilencer, and similar
+- **Process/service termination** — killing or disabling EDR agents and services
+- **Defender tampering** — protection disabled, or exclusions added
+- **Safe Mode abuse** — booting without EDR drivers loaded
+- **Event log / ETW tampering** — destroying or suppressing telemetry
+- **Native tamper events** — Defender's own tampering signals
+
+**Severity:** most techniques score Critical; Defender *exclusions* score High, since they have legitimate administrative uses.
+
 // ============================================================
 // EDR / AV Defense Evasion - Dashboard
 // ============================================================

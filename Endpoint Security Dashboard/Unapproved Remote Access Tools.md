@@ -1,3 +1,16 @@
+## 🖥️ Unapproved Remote Tools
+
+**Detects remote-access software that isn't sanctioned tooling.**
+
+RMM agents, remote-support clients, and VNC variants executing on endpoints — the primary delivery mechanism for vishing and helpdesk-impersonation attacks, where a caller convinces a user to install a remote tool and hands over the session.
+
+- Flags scam-favored tools separately from general RMM (`IsHighAbuseTool`)
+- Weights execution from user-writable paths, since attackers run portable builds rather than installing
+- `IsPortableExec` catches tools running outside `Program Files`
+- Approved internal tooling is excluded, so only *unauthorized* use surfaces
+
+**Severity:** high-abuse tool + suspicious path = Critical. Either signal alone = High.
+
 // ============================================================
 // Unauthorized / Unapproved Remote Access Tools - Dashboard
 // ============================================================

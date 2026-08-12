@@ -1,3 +1,15 @@
+## ⚙️ Rare Process as Service
+
+**Surfaces uncommon child processes of `services.exe`.**
+
+Service creation is a durable persistence method that survives reboots and runs as SYSTEM. This panel baselines what normally spawns from the service host and flags the outliers — processes appearing fewer than six times per device and absent from a known-good watchlist.
+
+- Enriched with network connections, file modifications, and DLL loads per process
+- Severity weights execution from user-writable paths plus external network egress
+- Requires a populated `KnownProcesses` watchlist to be meaningful
+
+**Severity:** suspicious path + external network = High. Either alone = Medium.
+
 // ============================================================
 // Rare Service Processes - services.exe Uncommon Children
 // ============================================================

@@ -1,3 +1,16 @@
+## 🦠 AV Detections
+
+**Defender antivirus detections weighted by remediation outcome.**
+
+A detection isn't automatically a resolved detection. This panel separates threats that were actually cleaned from those that were detected but left in place.
+
+- `NotRemediated` — detected but remediation failed, was allowed, or didn't complete
+- `WasRunning` — the threat was executing at detection time
+- `IsHighImpactFamily` — ransomware, backdoors, RATs, credential-theft tooling, loaders
+- Execution from user-writable paths adds weight
+
+**The row that matters:** a high-impact family that was **running** and **not remediated** is a live infection, not a caught one — that's the trigger to pivot into device triage.
+
 // ============================================================
 // Antivirus Detections - Dashboard View
 // ============================================================
