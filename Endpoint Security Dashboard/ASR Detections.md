@@ -7,7 +7,7 @@ ASR is prevention rather than detection — a hit means something was stopped. T
 - Severity assigned per rule rather than uniformly: ransomware, email-executable, Office-child-process, and vulnerable-driver blocks rank highest
 - Injection, obfuscated-script, and untrusted-executable blocks rank medium
 - Environment-specific noisy rules and known-good processes are excluded
-
+```
 // ============================================================
 // ASR Rule Blocks - Dashboard View (Severity Enriched)
 // ============================================================
@@ -69,3 +69,4 @@ DeviceEvents
     InitiatingProcessFolderPath,
     SHA256
 | sort by Severity asc, HitCount desc
+```
