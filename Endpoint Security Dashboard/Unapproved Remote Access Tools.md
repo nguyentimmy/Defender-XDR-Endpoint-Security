@@ -11,6 +11,7 @@ RMM agents, remote-support clients, and VNC variants executing on endpoints — 
 
 **Severity:** high-abuse tool + suspicious path = Critical. Either signal alone = High.
 
+```
 // ============================================================
 // Unauthorized / Unapproved Remote Access Tools - Dashboard
 // ============================================================
@@ -81,3 +82,4 @@ DeviceProcessEvents
     CommandLines,
     LastSeen
 | sort by Severity asc, Executions desc
+```
