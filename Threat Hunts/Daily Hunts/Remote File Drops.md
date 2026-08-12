@@ -50,6 +50,13 @@ High file count plus many distinct hashes is the ransomware-staging profile — 
 // ============================================================
 // PSEXEC LATERAL MOVEMENT - Mass Remote File Drops
 // ============================================================
+// MITRE ATT&CK:
+//   Tactic:    Lateral Movement, Execution
+//   Technique: T1570     - Lateral Tool Transfer
+//              T1021.002 - Remote Services: SMB/Windows Admin Shares
+//              T1569.002 - System Services: Service Execution
+//              T1072     - Software Deployment Tools
+// ============================================================
 // Hunts for PsExec-style tools dropping multiple executables to remote
 // machines (admin shares) within a 10-minute window — a strong indicator
 // of lateral movement, mass tool deployment, or ransomware staging.
