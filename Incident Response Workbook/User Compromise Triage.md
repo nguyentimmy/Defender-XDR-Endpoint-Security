@@ -28,6 +28,10 @@ This unifies them into one timeline. Use it when a user is named in a phishing r
 | **OAuth Consent** | Application permission grants — persistent access that survives a password reset |
 | **Mailbox Export** | eDiscovery, compliance search, and bulk mail export operations |
 
+---
+
+## KQL
+
 ```
 // ============================================================
 // USER COMPROMISE TRIAGE - Workbook (Parameterized)
