@@ -34,6 +34,8 @@ Use it when a device surfaces in an alert, appears on the endpoint dashboard, or
 | **Remote Access** | Unauthorized RATs and tunneling tools (ngrok, chisel, frp, cloudflared) |
 | **Defender Detections** | Native AV, ASR, Exploit Guard, and SmartScreen hits on the host |
 
+---
+## KQL
 ```
 // ============================================================
 // DEVICE COMPROMISE TRIAGE - Workbook (Parameterized)
