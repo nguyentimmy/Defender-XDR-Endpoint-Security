@@ -1,4 +1,4 @@
-📊 Endpoint Security Workbook
+## 📊 Endpoint Security Workbook
 
 Continuous fleet-wide endpoint monitoring. The layer that tells you where to look.
 Panels spanning prevention, detection, evasion, and visibility — designed to be glanced at rather than queried.
