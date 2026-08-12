@@ -1,0 +1,27 @@
+// ============================================================
+// Defender Health - Sensor Not Reporting (Sentinel-compatible)
+// ============================================================
+// Blind-spot map: onboarded devices whose Defender sensor isn't healthy.
+// Uses DeviceInfo, which IS exported to Log Analytics - unlike the
+// DeviceTvm* tables, which are Defender-XDR-only.
+// NOTE: an empty result is the healthy state.
+// ============================================================
+let LookupTime = 7d;
+DeviceInfo
+| where TimeGenerated > ago(LookupTime)
+| summarize arg_max(TimeGenerated, OnboardingStatus, SensorHealthState) by DeviceName, DeviceId
+| where OnboardingStatus == "Onboarded"
+| where SensorHealthState !in~ ("Active", "")
+| extend Severity = case(
+    SensorHealthState has_any ("Inactive", "Misconfigured"), "🔴 Critical",
+    SensorHealthState has "ImpairedCommunication", "🟠 High",
+    "🟡 Medium"
+)
+| project
+    LastSeen = TimeGenerated,
+    Severity,
+    DeviceName,
+    SensorHealthState,
+    OnboardingStatus,
+    DeviceId
+| sort by Severity asc, LastSeen asc
