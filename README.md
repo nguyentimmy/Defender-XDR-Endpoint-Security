@@ -19,14 +19,12 @@ identity attacks, EDR evasion, and living-off-the-land techniques.
 ## 🔍 What's Inside
 
 ### 🎯 Threat Hunting Queries
-Proactively hunt for potential malicious activities in the environment. 
-- **EDR Evasion & Defense Evasion** — BYOVD, ASR bypass, Defender tampering
-- **Identity Attacks** — Password spray, MFA fatigue, impossible travel, risky sign-ins
-- **Data Exfiltration** — Sensitive file downloads, mass OneDrive/SharePoint access
-- **Cryptomining** — Stratum protocol connections, mining pool infrastructure, miner binaries
-- **Supply Chain** — Malicious npm/PyPI packages, IPFS-based payload delivery
-- **Living-Off-the-Land** — PowerShell abuse, LOLBin misuse, obfuscated commands
-- **+ More To Come**
+- Proactively hunt for potential malicious activities in the environment. 
+  - **EDR Evasion & Defense Evasion** — BYOVD, ASR bypass, Defender tampering
+  - **Identity Attacks** — Password spray, MFA fatigue, impossible travel, risky sign-ins
+  - **Data Exfiltration** — Sensitive file downloads, mass OneDrive/SharePoint access
+  - **Living-Off-the-Land** — PowerShell abuse, LOLBin misuse, obfuscated commands
+  - **+ More**
 
 ### 📊 Workbooks & Dashboards
 - **Endpoint Security Dashboard** — AV/ASR blocks, rare process executions, elevated PowerShell activity
