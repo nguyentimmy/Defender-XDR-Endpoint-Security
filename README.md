@@ -27,9 +27,9 @@ identity attacks, EDR evasion, and living-off-the-land techniques.
   - **+ More**
 
 ### 📊 Workbooks & Dashboards
-- **Endpoint Security Dashboard** — AV/ASR blocks, rare process executions, elevated PowerShell activity
-- **Incident Response Dashboard** — Streamline Incident Response and view timelines in a holistic approach
-- **Digital Forensics Dashboard** — Gather evidence in a unified dashboard 
+- **Endpoint Security Dashboard** — AV/ASR blocks, rare process executions, elevated PowerShell activity + more.
+- **Incident Response Dashboard** — Streamline Incident Response and view timelines in a holistic approach.
+- **Digital Forensics Dashboard** — Gather evidence in a unified dashboard. 
 
 ### ⚡ Custom Detection Rules
 - Production-ready analytics rules for Sentinel and Defender XDR covering high-fidelity detections with tuned false-positive rates.
@@ -42,7 +42,6 @@ identity attacks, EDR evasion, and living-off-the-land techniques.
 - Microsoft Defender XDR (Endpoint, Identity, Office 365, Cloud Apps)
 - KQL (Kusto Query Language)
 - Azure Logic Apps
-- PowerShell
 
 ---
 
