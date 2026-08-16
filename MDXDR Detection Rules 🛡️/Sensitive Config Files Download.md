@@ -18,7 +18,6 @@ Matches are classified so triage knows what was taken:
 
 | Category | Covers |
 | --- | --- |
-| 🔥 **FortiGate Config** | `.fgt`, `.fbf`, `.conf.gz`, plus filename keywords (`fortigate`, `fortinet`, `fgt_`, `sys_config`) |
 | 🔑 **Credential / Secret** | `.env`, `.pem`, `.key`, `.pfx`, `.p12`, `.kdbx`, `.ppk`, `.ovpn`, `.rdp` |
 | ⚙️ **General Config** | `.config`, `.conf`, `.cfg`, `.ini` |
 
