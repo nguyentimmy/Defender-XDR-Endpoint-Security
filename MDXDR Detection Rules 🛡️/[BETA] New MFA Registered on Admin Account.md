@@ -1,5 +1,81 @@
-Coming Soon
-```
+# 🔐 New MFA Method Registered on Privileged Account
+
+**Detection rule — fires when an authentication method is registered, changed, or deleted on an account holding a privileged directory role.**
+
+---
+
+## 🎯 Purpose
+
+Detects registration, modification, or deletion of authentication methods on accounts holding privileged directory roles. Enriched with three context signals — registered by a different account, registered from a new IP, or registered shortly after a password reset — to separate routine enrollment from account takeover activity.
+
+Intended for scheduled execution at 15-minute cadence. Multiple context signals stacking indicates a high-confidence takeover chain and warrants immediate response.
+
+---
+
+## 🔍 How it works
+
+| Step | Logic |
+| --- | --- |
+| 1️⃣ | Build `PrivilegedAccounts` set from `IdentityInfo` (UEBA, filtered to accounts holding roles in the target list) unioned with the optional `PrivilegedAccounts` Watchlist |
+| 2️⃣ | Materialize `KnownUserIPs` — successful sign-in IPs per privileged account over a 14-day baseline |
+| 3️⃣ | Materialize `RecentPasswordResets` — successful password resets in the last 2 hours + rule window |
+| 4️⃣ | Query `AuditLogs` for auth method registration, change, or deletion operations |
+| 5️⃣ | Filter to operations targeting privileged accounts |
+| 6️⃣ | Classify `MethodType` from `modifiedProperties` — Authenticator, Phone/SMS, FIDO2, Email, TAP, OATH |
+| 7️⃣ | Tag three context signals: `RegisteredByOther`, `FromNewIP`, `AfterPasswordReset` |
+| 8️⃣ | Score with weighted signals, label severity, and emit with entity mapping |
+
+---
+
+## ⚙️ Rule configuration
+
+| Setting | Value |
+| --- | --- |
+| **Frequency** | 15 min |
+| **Lookback** | 15 min |
+| **Severity** | High (dynamic per score) |
+| **Grouping** | Alert per event |
+| **Ingestion delay buffer** | 10 min |
+| **Baseline window** | 14 days |
+| **Password reset correlation window** | 2 hours |
+| **Entities** | Account, IP |
+
+**Prerequisites (either or both):**
+
+- **UEBA enabled** — the rule uses `IdentityInfo` to pull accounts with privileged roles assigned. Preferred source, keeps role assignments current.
+- **`PrivilegedAccounts` Watchlist** — CSV-driven with a `UserPrincipalName` column. Backfills accounts UEBA may miss (guest admins, service accounts, delegated roles). If UEBA isn't available, comment out the UEBA source and rely on the Watchlist alone.
+
+**Privileged roles tracked:** Global Administrator, Privileged Role Administrator, Privileged Authentication Administrator, Authentication Administrator, Security Administrator, Exchange/SharePoint/Teams Administrator, User Administrator, Application Administrator, Cloud Application Administrator, Conditional Access Administrator, Intune Administrator, Helpdesk Administrator, Password Administrator, Billing Administrator, Hybrid Identity Administrator, Domain Name Administrator, Partner Tier1/Tier2 Support.
+
+---
+
+## ⚖️ Scoring model
+
+Base score of 5 for any auth method change on a privileged account, plus weighted context signals. `AfterPasswordReset` carries the most weight — it's the classic account-takeover sequence.
+
+| Signal | Weight | Meaning |
+| --- | --- | --- |
+| **Base score** | 5 | Any auth method operation on a privileged account |
+| **After password reset** | +4 | Method registered within 2 hours of a successful password reset — takeover chain |
+| **Registered by other** | +3 | Actor ≠ target account (someone else made the change) |
+| **From new IP** | +3 | Registration IP not in the target's 14-day sign-in baseline |
+| **Temporary Access Pass** | +3 | TAP registration — can bypass MFA entirely, high-risk |
+| **Method deleted** | +2 | Existing method removed — reducing legitimate access paths |
+
+**Severity thresholds:**
+
+| Score | Severity |
+| --- | --- |
+| 8+ | 🔴 High |
+| < 8 | 🟡 Medium |
+
+**Response guidance when fires:** verify against ticketing/change management. If the change wasn't scheduled or requested by the account owner, treat as suspected account compromise — revoke sessions, force password reset, review recent sign-ins for the target and actor, and check for any privileged operations performed in the intervening window.
+
+---
+
+## 🔍 KQL
+
+```kql
 // ============================================================
 // [DETECTION RULE] New MFA Method Registered on Privileged Account
 // ============================================================
@@ -211,3 +287,9 @@ AuditLogs
     IPCustomEntity        = ActorIP
 | sort by RiskScore desc, TimeGenerated desc
 ```
+
+---
+
+## 📚 Reference
+
+MITRE ATT&CK: T1556.006 (Modify Authentication Process: MFA), T1098.005 (Account Manipulation: Device Registration), T1078.004 (Valid Accounts: Cloud Accounts).
