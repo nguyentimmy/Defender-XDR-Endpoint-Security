@@ -49,7 +49,8 @@ Detection rules are the safety net for known threats — they demand attention t
 
 ---
 ### 🤖 SOAR Playbooks — *coming soon*
-Logic App workflows for automated response — device isolation, session revocation, IOC block list management, and malicious sender blocking via Microsoft Graph API.
+
+> Logic App workflows for automated response — device isolation, session revocation, IOC block list management, and malicious sender blocking via Microsoft Graph API.
 ---
 
 ## 🛠️ Tools & Platforms
