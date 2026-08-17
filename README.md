@@ -67,7 +67,6 @@ Both are needed — they solve different problems.
 
 - **MITRE ATT&CK mapping** on all detections
 - **14-day lookback** as standard hunting window
-- **False positive tuning** documented per detection
 - **Severity scoring** based on confidence and impact
 
 ---
