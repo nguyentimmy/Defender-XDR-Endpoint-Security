@@ -13,10 +13,10 @@ This repo contains detection engineering and threat hunting content developed fo
 ## 🔍 What's Inside
 
 ### ⚡ Custom Detection Rules
-Production-ready analytics rules for Sentinel and Defender XDR — high-fidelity detections with tuned false-positive rates, entity mapping, and response guidance.
+> Production-ready analytics rules for Sentinel and Defender XDR — high-fidelity detections with tuned false-positive rates, entity mapping, and response guidance.
 
 ### 🎯 Threat Hunting Queries
-Proactive queries to hunt for suspicious activity across the environment:
+> Proactive queries to hunt for suspicious activity across the environment:
 - **EDR Evasion & Defense Evasion** — BYOVD, ASR bypass, Defender tampering
 - **Identity Attacks** — Password spray, MFA fatigue, impossible travel, risky sign-ins
 - **Data Exfiltration** — Sensitive file downloads, mass OneDrive/SharePoint access
