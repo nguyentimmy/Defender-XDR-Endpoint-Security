@@ -6,11 +6,9 @@
 
 ## 🎯 Purpose
 
-By the time a ransom note appears on a user's screen, you've already lost. This detection is the **last chance to isolate a host before a share is gone**. It targets the three telemetry signals ransomware generates in the seconds and minutes before impact is complete: a single process rewriting hundreds of files with a converging extension, ransom notes dropped across many folders, and mass file deletion typical of wipers or exfil-then-destroy operations.
+Detects ransomware execution in progress by identifying three telemetry patterns: encryption bursts (one process rewriting many files with a converging extension), ransom notes dropped across multiple folders, and mass file deletion consistent with wipers or destructive attacks.
 
-Precision comes from three combined requirements — one process, many files across many folders, converging on a single novel extension. Legitimate bulk activity (installers, backup agents, OneDrive) touches many *different* extensions across many files; ransomware converges on one. That distinction is what keeps this precise enough to auto-isolate on.
-
-**Deploy at the shortest scheduling interval your tier allows.** Minutes matter.
+Intended for scheduled execution at the shortest available cadence. Any branch firing is Critical severity and warrants immediate device isolation.
 
 ---
 
