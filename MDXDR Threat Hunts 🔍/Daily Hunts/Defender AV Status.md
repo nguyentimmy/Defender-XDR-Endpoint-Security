@@ -2,7 +2,7 @@
 
 **The blind-spot map: onboarded devices whose sensor isn't reporting healthy.**
 
-Every other panel on this dashboard depends on telemetry arriving. A device with an inactive or misconfigured sensor generates no detections — which looks identical to a clean device. This panel closes that gap.
+A device with an inactive or misconfigured sensor generates no detections — which looks identical to a clean device. This panel closes that gap.
 
 - Filters to devices marked Onboarded whose `SensorHealthState` isn't Active
 - Severity: Inactive or Misconfigured = Critical; ImpairedCommunication = High
