@@ -23,8 +23,6 @@ Proactive queries to hunt for suspicious activity across the environment:
 - **Living-Off-the-Land** — PowerShell abuse, LOLBin misuse, obfuscated commands
 - **+ More**
 
----
-
 ## ⚖️ Detection Rules vs Threat Hunts
 
 Both are needed — they solve different problems.
@@ -39,6 +37,8 @@ Both are needed — they solve different problems.
 
 Detection rules are the safety net for known threats — they demand attention the moment they fire. Threat hunts are the noisier but necessary work of finding what automation misses, run on a cadence and reviewed by an analyst before action.
 
+---
+
 ### 📊 Workbooks & Dashboards
 
 | Workbook | Purpose | When to use |
@@ -47,9 +47,9 @@ Detection rules are the safety net for known threats — they demand attention t
 | **🚨 Incident Response** | Unified TTP view — common attack patterns surfaced in one place for fast triage | Active incident, first response |
 | **🔎 Digital Forensics** | Device-scoped timelines: process lineage, file/registry/network activity, persistence inventory | Post-incident deep investigation |
 
+---
 ### 🤖 SOAR Playbooks — *coming soon*
 Logic App workflows for automated response — device isolation, session revocation, IOC block list management, and malicious sender blocking via Microsoft Graph API.
-
 ---
 
 ## 🛠️ Tools & Platforms
