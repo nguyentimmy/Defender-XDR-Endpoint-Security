@@ -35,8 +35,8 @@ Both are needed — they solve different problems.
 | **Response** | Immediate, often auto-response | Review, tune, and pivot |
 | **Examples** | Break-glass account use, sign-in from IOC, credential file exfil to malicious IP | Suspicious PowerShell scoring, LOLBin abuse, HTTP+Tor download correlation |
 
-Detection rules pinpoints the activitiy, — they demand attention the moment they fire. 
-Threat hunts finds the noisier activitiy, but a proactive approach of finding what automation misses and siganture that may go undetected.
+- Detection rules pinpoints the activity, — they demand attention the moment they fire. 
+- Threat hunts finds the noisier activity, but a proactive approach of finding what automation misses and siganture that may go undetected.
 
 ---
 
