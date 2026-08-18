@@ -8,8 +8,6 @@
 
 A LOLBin is a legitimate signed OS binary — like `certutil` or `rundll32` — that attackers abuse instead of their own malware. Because it's trusted and admins use it too, it evades AV and application control and blends into normal activity. That's why you can't just block them — you have to detect how they're being used.
 
-This hunt matches each execution against known abuse patterns (Squiblydoo, Follina, comsvcs LSASS dump, certutil URL cache, etc.), tags high-confidence techniques distinctly from suspicious-but-ambiguous ones, then layers supporting context — URL, UNC path, user-writable location, suspicious parent, elevation — to score. The `IsHighConfidence` flag carries through so the top tier can be promoted to a scheduled rule with confidence, while the lower tier stays in the workbook for review.
-
 ---
 
 ## 🔍 How it works
