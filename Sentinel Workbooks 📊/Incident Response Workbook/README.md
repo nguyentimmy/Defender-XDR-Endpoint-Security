@@ -10,7 +10,7 @@ Streamlines unified events across device and user compromise into one chronologi
 
 Investigating one suspect entity traditionally means opening a dozen separate queries across process, registry, network, identity, and mailbox telemetry — then lining up timestamps by hand. During an active incident that setup work is the bottleneck, not the analysis.
 
-This collapses it into two parameterized views. It answers **is something wrong, what kind, and when** — which is exactly what the Digital Forensics workbook needs as input.
+This collapses it into parameterized views. It answers **is something wrong, what kind, and when** — which is exactly what the Digital Forensics workbook needs as input.
 
 ---
 
@@ -49,14 +49,34 @@ Every row carries the initiating process, its command line, the spawned child pr
 
 ---
 
+## 📤 Data Exfiltration Tab
+
+Exfiltration rarely shows up as one obvious event — it's a sequence of collect, stage, compress, then move, and the move often uses a different channel than the one being monitored. An attacker who can't reach a file-sharing site uses email; a user walking out with data uses a USB drive. This tab covers eight channels in one view so the pattern is visible rather than scattered, and it applies equally to external intrusion and insider risk.
+
+| Channel | Catches |
+| --- | --- |
+| **File-Sharing / Paste Uploads** | WeTransfer, MEGA, anonymous file hosts, paste sites, personal cloud storage |
+| **Exfil Tooling** | `rclone`, `megacmd`, `azcopy`, WinSCP, FTP clients, cloud CLIs with an upload verb |
+| **Mass Archiving** | Bulk compression, weighted when password-protected or targeting sensitive paths |
+| **Removable Media** | USB mount events and bulk writes to non-system drives |
+| **Bulk Cloud Download** | High-volume SharePoint / OneDrive file downloads |
+| **Outbound Attachments** | External attachment volume, weighted higher for personal webmail recipients |
+| **Mail Forwarding Rules** | Inbox and transport rules forwarding externally — the classic BEC method |
+| **Connection Fan-Out** | High connection counts from non-browser processes, as a volume proxy |
+
+This tab spans both planes — endpoint channels (tooling, archiving, removable media) and identity channels (cloud download, forwarding rules, attachments) — so it's the natural bridge when an intrusion moves from access to theft.
+
+---
+
 ## 🔄 Pivoting
 
-**The two tabs are designed to pivot into each other.** Most intrusions cross both the endpoint and identity planes:
+**The tabs are designed to pivot into each other.** Most intrusions cross the endpoint and identity planes:
 
 - A risky sign-in names a device → open the device tab
 - A compromised endpoint names a logged-in account → open the user tab
+- Either one showing collection or staging → open the exfil tab to see if data actually left
 
-Start with whichever entity you have and follow the trail to the other.
+Start with whichever entity you have and follow the trail.
 
 ---
 
